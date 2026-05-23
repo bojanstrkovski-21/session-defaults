@@ -20,7 +20,8 @@ curl -sL "$BASE_URL/templates/PROJECT.md" | sed "s/{{PROJECT_NAME}}/$PROJECT_NAM
 curl -sL "$BASE_URL/templates/set-git-cred.sh" -o set-git-cred.sh
 curl -sL "$BASE_URL/templates/push.sh" -o push.sh
 
-read -p "Set project name '$PROJECT_NAME' in set-git-cred.sh? (y/n): " setname
+#read -p "Set project name '$PROJECT_NAME' in set-git-cred.sh? (y/n): " setname
+read -p "Set project name '$PROJECT_NAME' in set-git-cred.sh? (y/n): " setname </dev/tty
 if [[ "$setname" =~ ^[Yy](es)?$ ]]; then
     sed -i "s|project=your-project-name|project=$PROJECT_NAME|" ./set-git-cred.sh
     echo "Project name set."
@@ -42,7 +43,8 @@ echo "  push.sh"
 echo ""
 
 if [ -d .git ]; then
-    read -p "Git initialized. Run set-git-cred.sh now? (y/n): " runcred
+   #read -p "Git initialized. Run set-git-cred.sh now? (y/n): " runcred
+    read -p "Git initialized. Run set-git-cred.sh now? (y/n): " runcred </dev/tty
     if [[ "$runcred" =~ ^[Yy](es)?$ ]]; then
         bash ./set-git-cred.sh
     fi
