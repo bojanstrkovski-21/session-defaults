@@ -1,42 +1,39 @@
 #!/bin/bash
-# Run from the root of a NEW project folder:
-#   curl -sL https://raw.githubusercontent.com/bojanstrkovski-21/session-defaults/main/setup.sh | bash
-
 set -euo pipefail
 
-BASE_URL="https://raw.githubusercontent.com/bojanstrkovski-21/session-defaults/main"
-PROJECT_NAME=$(basename "$PWD")
+DEFAULTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo "Setting up session defaults for: $PROJECT_NAME"
+if [[ -z "${1:-}" ]]; then
+    echo "Usage: bash ~/Projects/session-defaults/setup.sh <ProjectName>"
+    exit 1
+fi
+
+PROJECT_NAME="$1"
+PROJECT_DIR="$(pwd)/$PROJECT_NAME"
+
+if [[ -d "$PROJECT_DIR" ]]; then
+    echo "Folder '$PROJECT_NAME' already exists."
+    exit 1
+fi
+
+echo "Creating project: $PROJECT_NAME"
+mkdir -p "$PROJECT_DIR/.github/prompts"
+
+cp -r "$DEFAULTS_DIR/prompts/."  "$PROJECT_DIR/.github/prompts/"
+cp -r "$DEFAULTS_DIR/memory"     "$PROJECT_DIR/"
+cp    "$DEFAULTS_DIR/templates/copilot-instructions.md" "$PROJECT_DIR/.github/"
+cp    "$DEFAULTS_DIR/templates/push.sh"                 "$PROJECT_DIR/"
+cp    "$DEFAULTS_DIR/templates/set-git-cred.sh"         "$PROJECT_DIR/"
+cp    "$DEFAULTS_DIR/sync.sh"                           "$PROJECT_DIR/"
+sed   "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$DEFAULTS_DIR/templates/PROJECT.md" > "$PROJECT_DIR/PROJECT.md"
+
+sed -i "s|project=your-project-name|project=$PROJECT_NAME|" "$PROJECT_DIR/set-git-cred.sh"
+chmod +x "$PROJECT_DIR/set-git-cred.sh" "$PROJECT_DIR/push.sh" "$PROJECT_DIR/sync.sh"
+
 echo ""
+echo "Done. Project created at: $PROJECT_DIR"
+echo "cd $PROJECT_NAME and say 'start session'."
 
-mkdir -p .github/prompts memory
-
-curl -sL "$BASE_URL/prompts/session-start.prompt.md"  -o .github/prompts/session-start.prompt.md
-curl -sL "$BASE_URL/prompts/session-end.prompt.md"    -o .github/prompts/session-end.prompt.md
-curl -sL "$BASE_URL/prompts/git-commit.prompt.md"     -o .github/prompts/git-commit.prompt.md
-curl -sL "$BASE_URL/prompts/git-init.prompt.md"       -o .github/prompts/git-init.prompt.md
-curl -sL "$BASE_URL/templates/copilot-instructions.md" -o .github/copilot-instructions.md
-curl -sL "$BASE_URL/templates/PROJECT.md" | sed "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" > PROJECT.md
-curl -sL "$BASE_URL/templates/set-git-cred.sh"        -o set-git-cred.sh
-curl -sL "$BASE_URL/templates/push.sh"                -o push.sh
-curl -sL "$BASE_URL/memory/session-notes.md"          -o memory/session-notes.md
-curl -sL "$BASE_URL/memory/tips.md"                   -o memory/tips.md
-
-sed -i "s|project=your-project-name|project=$PROJECT_NAME|" ./set-git-cred.sh
-chmod +x ./set-git-cred.sh ./push.sh
-git config --add core.fileMode true 2>/dev/null || true
-
-echo "Done. Files created:"
-echo "  .github/prompts/ (4 prompts)"
-echo "  .github/copilot-instructions.md"
-echo "  PROJECT.md"
-echo "  memory/session-notes.md"
-echo "  memory/tips.md"
-echo "  set-git-cred.sh"
-echo "  push.sh"
-echo ""
-echo "Next: open Claude Code and say 'start session'."
 
 ## Session-defaults bootstrap script
 ## Run this from the root of a NEW project folder to set up session defaults.
