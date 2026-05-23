@@ -8,7 +8,8 @@
 
 set -euo pipefail
 
-TEMPLATE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+#TEMPLATE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TEMPLATE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 PROJECT_NAME=$(basename "$PWD")
 
 echo "Setting up session defaults for: $PROJECT_NAME"
