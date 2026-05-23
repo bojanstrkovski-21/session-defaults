@@ -20,19 +20,11 @@ curl -sL "$BASE_URL/templates/PROJECT.md" | sed "s/{{PROJECT_NAME}}/$PROJECT_NAM
 curl -sL "$BASE_URL/templates/set-git-cred.sh" -o set-git-cred.sh
 curl -sL "$BASE_URL/templates/push.sh" -o push.sh
 
-#read -p "Set project name '$PROJECT_NAME' in set-git-cred.sh? (y/n): " setname
-read -p "Set project name '$PROJECT_NAME' in set-git-cred.sh? (y/n): " setname </dev/tty
-if [[ "$setname" =~ ^[Yy](es)?$ ]]; then
-    sed -i "s|project=your-project-name|project=$PROJECT_NAME|" ./set-git-cred.sh
-    echo "Project name set."
-else
-    echo "Edit set-git-cred.sh manually before use."
-fi
+sed -i "s|project=your-project-name|project=$PROJECT_NAME|" ./set-git-cred.sh
 
 chmod +x ./set-git-cred.sh ./push.sh
 git config --add core.fileMode true 2>/dev/null || true
 
-echo ""
 echo "Done. Files created:"
 echo "  .github/prompts/session-start.prompt.md"
 echo "  .github/prompts/session-end.prompt.md"
@@ -41,16 +33,8 @@ echo "  PROJECT.md"
 echo "  set-git-cred.sh"
 echo "  push.sh"
 echo ""
-
-if [ -d .git ]; then
-   #read -p "Git initialized. Run set-git-cred.sh now? (y/n): " runcred
-    read -p "Git initialized. Run set-git-cred.sh now? (y/n): " runcred </dev/tty
-    if [[ "$runcred" =~ ^[Yy](es)?$ ]]; then
-        bash ./set-git-cred.sh
-    fi
-fi
-
 echo "Next: open Claude Code and say 'start session'."
+
 
 ## Session-defaults bootstrap script
 ## Run this from the root of a NEW project folder to set up session defaults.
