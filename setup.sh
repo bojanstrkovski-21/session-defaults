@@ -1,5 +1,4 @@
 #!/bin/bash
-# Session-defaults bootstrap script
 # Run from the root of a NEW project folder:
 #   curl -sL https://raw.githubusercontent.com/bojanstrkovski-21/session-defaults/main/setup.sh | bash
 
@@ -11,30 +10,33 @@ PROJECT_NAME=$(basename "$PWD")
 echo "Setting up session defaults for: $PROJECT_NAME"
 echo ""
 
-mkdir -p .github/prompts
+mkdir -p .github/prompts memory
 
-curl -sL "$BASE_URL/prompts/session-start.prompt.md" -o .github/prompts/session-start.prompt.md
-curl -sL "$BASE_URL/prompts/session-end.prompt.md"   -o .github/prompts/session-end.prompt.md
+curl -sL "$BASE_URL/prompts/session-start.prompt.md"  -o .github/prompts/session-start.prompt.md
+curl -sL "$BASE_URL/prompts/session-end.prompt.md"    -o .github/prompts/session-end.prompt.md
+curl -sL "$BASE_URL/prompts/git-commit.prompt.md"     -o .github/prompts/git-commit.prompt.md
+curl -sL "$BASE_URL/prompts/git-init.prompt.md"       -o .github/prompts/git-init.prompt.md
 curl -sL "$BASE_URL/templates/copilot-instructions.md" -o .github/copilot-instructions.md
 curl -sL "$BASE_URL/templates/PROJECT.md" | sed "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" > PROJECT.md
-curl -sL "$BASE_URL/templates/set-git-cred.sh" -o set-git-cred.sh
-curl -sL "$BASE_URL/templates/push.sh" -o push.sh
+curl -sL "$BASE_URL/templates/set-git-cred.sh"        -o set-git-cred.sh
+curl -sL "$BASE_URL/templates/push.sh"                -o push.sh
+curl -sL "$BASE_URL/memory/session-notes.md"          -o memory/session-notes.md
+curl -sL "$BASE_URL/memory/tips.md"                   -o memory/tips.md
 
 sed -i "s|project=your-project-name|project=$PROJECT_NAME|" ./set-git-cred.sh
-
 chmod +x ./set-git-cred.sh ./push.sh
 git config --add core.fileMode true 2>/dev/null || true
 
 echo "Done. Files created:"
-echo "  .github/prompts/session-start.prompt.md"
-echo "  .github/prompts/session-end.prompt.md"
+echo "  .github/prompts/ (4 prompts)"
 echo "  .github/copilot-instructions.md"
 echo "  PROJECT.md"
+echo "  memory/session-notes.md"
+echo "  memory/tips.md"
 echo "  set-git-cred.sh"
 echo "  push.sh"
 echo ""
 echo "Next: open Claude Code and say 'start session'."
-
 
 ## Session-defaults bootstrap script
 ## Run this from the root of a NEW project folder to set up session defaults.
